@@ -19,6 +19,9 @@ class Viewmodel1(application: Application): AndroidViewModel(application) {
     private val _contAPI = MutableLiveData<Int>()
     val contAPI: LiveData<Int> = _contAPI
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading : LiveData<Boolean> = _isLoading
+
     init {
         _backgroundColor.value = Color.Red
         _contAPI.value = 0
@@ -32,12 +35,23 @@ class Viewmodel1(application: Application): AndroidViewModel(application) {
             _backgroundColor.value=Color.Red
         }
     }
-    fun llamarAPI() {
+    suspend fun llamarAPI() {
+        withContext(Dispatchers.IO) {
+            delay(5000)
+        }
+        _contAPI.value = _contAPI.value?.plus(1)
+    }
+
+    fun fetchData() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                delay(5000)
+            try {
+                _isLoading.value = true
+                llamarAPI()
+            } catch (e: Exception) {
+                println("Error ${e.message}")
+            } finally {
+                _isLoading.value = false
             }
-            _contAPI.value = _contAPI.value!! + 1
         }
     }
 
