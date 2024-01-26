@@ -5,6 +5,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class Viewmodel1(application: Application): AndroidViewModel(application) {
 
@@ -28,8 +33,12 @@ class Viewmodel1(application: Application): AndroidViewModel(application) {
         }
     }
     fun llamarAPI() {
-        Thread.sleep(5000)
-        _contAPI.value = _contAPI.value!! + 1
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                delay(5000)
+            }
+            _contAPI.value = _contAPI.value!! + 1
+        }
     }
 
 }
